@@ -20,7 +20,6 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.QueueingConsumer;
 
-import core.Launcher;
 
 public class ESPERNetFlow implements Runnable {
 
@@ -32,15 +31,12 @@ public class ESPERNetFlow implements Runnable {
 	private String amqp_server;
 	private String amqp_login;
 	private String amqp_password;
-	private String resource_id;
 	private static String query_string;
 	
     
 	//ESPER
 	private static EPRuntime cepRT;
 	private static EPAdministrator cepAdm;
-	private static ConcurrentHashMap<String,CEPListener> listners;
-	private static ConcurrentHashMap<String,EPStatement> statements;
 	private static Gson gson;
 	
 	
@@ -96,13 +92,18 @@ public class ESPERNetFlow implements Runnable {
 			
 			System.out.println("ESPEREngine: Active");
 			System.out.println("Input Exchange: " + inExchange + " output console");
-			if(addQuery("0", query_string))
-	        {
+			
+			try
+			{
+				EPStatement cepStatement = cepAdm.createEPL(query_string);
+				CEPListener c = new CEPListener();
+				cepStatement.addListener(c); 
 				System.out.println("Added Query: \"" + query_string + "\"");
 			}
-			else
+			catch(Exception ex)
 			{
 				System.out.println("Failed to add Query: \"" + query_string + "\"");	
+				
 			}
 			
 			
@@ -138,9 +139,9 @@ public class ESPERNetFlow implements Runnable {
     public static class CEPListener implements UpdateListener {
     	public String query_id;
     	
-    	public CEPListener(String query_id)
+    	public CEPListener()
     	{
-    		this.query_id = query_id;
+    		
     	}
     	public void update(EventBean[] newEvents, EventBean[] oldEvents) {
             if (newEvents != null) 
@@ -171,46 +172,6 @@ public class ESPERNetFlow implements Runnable {
         }
     }
     
-    public static boolean addQuery(String query_id, String query)
-    {
-    	try
-    	{
-    		EPStatement cepStatement = cepAdm.createEPL(query);
-    		CEPListener c = new CEPListener(query_id);
-    		cepStatement.addListener(c); 
-    		listners.put(query_id, c);
-    		statements.put(query_id, cepStatement);
-    		return true;
-    	}
-    	catch(Exception ex)
-    	{
-    		System.out.println("ESPEREngine addQuery: " + ex.toString());
-    		return false;
-    	}
-    }
-    
-    public static boolean delQuery(String query_id)
-    {
-    	try
-    	{
-    		EPStatement cepStatement = statements.get(query_id);
-    		CEPListener c = listners.get(query_id);
-    		cepStatement.removeListener(c);
-    		c = null;
-    		cepStatement.stop();
-    		cepStatement.destroy();
-    		cepStatement = null;
-    		listners.remove(query_id);
-    		statements.remove(query_id);
-    		return true;
-    	}
-    	catch(Exception ex)
-    	{
-    		System.out.println("ESPEREngine delQuery: " + ex.toString());
-    		return false;
-    	}
-    	
-    }
     
     public static void input(String inputStr) throws ParseException 
     {
