@@ -46,7 +46,6 @@ public class ESPERNetFlow implements Runnable {
 	
     public ESPERNetFlow(String amqp_server, String amqp_login, String amqp_password, String inExchange, String query_string)
     {
-    	this.resource_id = resource_id;
     	this.amqp_server = amqp_server;
     	this.amqp_login = amqp_login;
     	this.amqp_password = amqp_password;
@@ -57,7 +56,7 @@ public class ESPERNetFlow implements Runnable {
 		//
 		gson = new GsonBuilder().create();
 			
-		System.out.println("QueryNode: " +  amqp_server + " " + amqp_login + " " + amqp_password + " " + inExchange + "  " + query_string);
+		//System.out.println("QueryNode: " +  amqp_server + " " + amqp_login + " " + amqp_password + " " + inExchange + "  " + query_string);
     }
 	
     public void run() 
@@ -95,11 +94,17 @@ public class ESPERNetFlow implements Runnable {
 	        cepAdm = cep.getEPAdministrator();
 	        
 	 		//END ESPER
-			
-			System.out.println("ESPEREngine: Active");
+	        System.out.println("ESPEREngine: Active");
 			System.out.println("Input Exchange: " + inExchange + " output console");
-			System.out.println("Query: \"" + query_string + "\"");
 			
+	        if(!addQuery("0", query_string))
+	        {
+	        	System.out.println("Unable to Add Query: \"" + query_string + "\"");
+	        }
+	        else
+	        {
+	        	System.out.println("Added Query: \"" + query_string + "\"");
+	        }
 			
 			
 		while (true) 
@@ -147,7 +152,7 @@ public class ESPERNetFlow implements Runnable {
             		{
             			try
             			{
-            				//System.out.println("CEPListner out :" + str);
+            				System.out.println("CEPListner out :" + str);
             				//tx_channel.basicPublish(outExchange, "", null, str.getBytes());
             				
             			}
