@@ -135,7 +135,7 @@ public class ESPERNetFlow implements Runnable {
 		}
 		
 	}    
-
+//
     public static class CEPListener implements UpdateListener {
     	public String query_id;
     	
