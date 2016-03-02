@@ -1,0 +1,8 @@
+[amqp]
+server = <ip of amqp server>
+login = <login for amqp server>
+password = <password for amqp server>
+inexchange = <incoming amqp exchange>
+
+[cep]
+querystring = <query>
