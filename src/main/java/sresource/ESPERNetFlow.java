@@ -146,7 +146,7 @@ public class ESPERNetFlow implements Runnable {
     	public void update(EventBean[] newEvents, EventBean[] oldEvents) {
             if (newEvents != null) 
             {
-            	 	//System.out.println("EVENT");
+            	 	//System.out.println("START EVENT");
             		for(int i=0; i<newEvents.length;i++) {
 						String str = newEvents[i].getUnderlying().toString();
 						if (str != null) {
@@ -159,9 +159,11 @@ public class ESPERNetFlow implements Runnable {
 							}
 						}
 					}
-            		
-            	
-            }
+					//System.out.println("END EVENT");
+
+
+
+			}
             if (oldEvents != null) 
             {
             	 System.out.println("Old Event received: " + oldEvents[0].getUnderlying());
