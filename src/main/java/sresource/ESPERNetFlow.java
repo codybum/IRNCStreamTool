@@ -148,7 +148,7 @@ public class ESPERNetFlow implements Runnable {
             {
             	 	//System.out.println("EVENT");
             		for(int i=0; i<newEvents.length;i++) {
-						String str = newEvents[0].getUnderlying().toString();
+						String str = newEvents[i].getUnderlying().toString();
 						if (str != null) {
 							try {
 								System.out.println("CEPListner out :" + str);
