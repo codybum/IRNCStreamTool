@@ -147,20 +147,18 @@ public class ESPERNetFlow implements Runnable {
             if (newEvents != null) 
             {
             	 	//System.out.println("EVENT");
-            		String str = newEvents[0].getUnderlying().toString();
-            		if(str != null)
-            		{
-            			try
-            			{
-            				System.out.println("CEPListner out :" + str);
-            				//tx_channel.basicPublish(outExchange, "", null, str.getBytes());
-            				
-            			}
-            			catch(Exception ex)
-            			{
-            				System.out.println("ESPEREngine : Error : " + ex.toString());
-            			}
-            		}
+            		for(int i=0; i<newEvents.length;i++) {
+						String str = newEvents[0].getUnderlying().toString();
+						if (str != null) {
+							try {
+								System.out.println("CEPListner out :" + str);
+								//tx_channel.basicPublish(outExchange, "", null, str.getBytes());
+
+							} catch (Exception ex) {
+								System.out.println("ESPEREngine : Error : " + ex.toString());
+							}
+						}
+					}
             		
             	
             }

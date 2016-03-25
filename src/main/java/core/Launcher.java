@@ -14,6 +14,8 @@ import sresource.ESPERNetFlow;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
+import static com.espertech.esper.util.DatabaseTypeEnum.String;
+
 
 public class Launcher {
 
