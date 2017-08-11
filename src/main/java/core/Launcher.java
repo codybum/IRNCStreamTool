@@ -3,12 +3,10 @@ package core;
 
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import hbase.HBaseRecordInsert;
+import hbase.InputRecord;
 import sresource.ESPERNetFlow;
 
 import com.rabbitmq.client.Connection;
@@ -24,11 +22,15 @@ public class Launcher {
     
     public static ConnectionFactory factory;    
     public static Connection connection;
-    
-    
+    public static Boolean HBASEActive = false;
+	public static ConcurrentLinkedQueue<InputRecord> insertQueue;
+
+
+
 	public static void main(String[] args) throws Exception 
 	{
-		
+		insertQueue = new ConcurrentLinkedQueue<>();
+
 		//create config
 		conf = new Config(checkConfig(args));
 		
@@ -38,11 +40,25 @@ public class Launcher {
 		String amqp_password = conf.getConfig("amqp", "password");
 		String amqp_inexchange = conf.getConfig("amqp", "inexchange");
 		String querystring = conf.getConfig("cep", "querystring");
-		
+
+
 		ESPERNetFlow enf = new ESPERNetFlow(amqp_server,amqp_login,amqp_password,amqp_inexchange,querystring);
 		Thread et = new Thread(enf);
 		et.start();
-		
+
+		System.out.println("Starting HBase Insert...");
+		HBaseRecordInsert hbinsert = new HBaseRecordInsert();
+		Thread hi_thread = new Thread(hbinsert);
+		hi_thread.start();
+
+		while(!HBASEActive)
+		{
+			Thread.sleep(1000);
+			System.out.println("Waiting on HBASEActive...");
+		}
+
+
+
     	
 	}
 	

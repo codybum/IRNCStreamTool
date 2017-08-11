@@ -19,6 +19,8 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.QueueingConsumer;
+import core.Launcher;
+import hbase.InputRecord;
 
 
 public class ESPERNetFlow implements Runnable {
@@ -77,22 +79,28 @@ public class ESPERNetFlow implements Runnable {
 			rx_channel.basicConsume(queueName, true, consumer); 
 			//END RX
 			// END AMQP
-			
+
+
+
 			//START ESPER
 			
 			//The Configuration is meant only as an initialization-time object.
-	        Configuration cepConfig = new Configuration();
+	        /*
+			Configuration cepConfig = new Configuration();
 	        //cepConfig.getEngineDefaults().getThreading().setInternalTimerEnabled(false);
 	        cepConfig.addEventType("netFlow", netFlow.class.getName());
 	        EPServiceProvider cep = EPServiceProviderManager.getProvider("myCEPEngine", cepConfig);
 	        cepRT = cep.getEPRuntime();
 	        cepAdm = cep.getEPAdministrator();
-	        
+	        */
 	 		//END ESPER
-			
+
+
+
 			System.out.println("ESPEREngine: Active");
 			System.out.println("Input Exchange: " + inExchange + " output console");
-			
+
+			/*
 			try
 			{
 				EPStatement cepStatement = cepAdm.createEPL(query_string);
@@ -105,7 +113,7 @@ public class ESPERNetFlow implements Runnable {
 				System.out.println("Failed to add Query: \"" + query_string + "\"");	
 				
 			}
-			
+			*/
 			
 		while (true) 
     	{
@@ -116,7 +124,14 @@ public class ESPERNetFlow implements Runnable {
 				{
 					String message = new String(delivery.getBody());
 					//pass messages to processor
-					input(message);
+					//input(message);
+//String json, netFlow nf, String source
+
+					//System.out.println(message);
+					Launcher.insertQueue.offer(new InputRecord(message, nFlowFromJson(message), inExchange));
+
+					//System.out.println("Offer");
+
 				}
 			}
 			catch(Exception ex)
